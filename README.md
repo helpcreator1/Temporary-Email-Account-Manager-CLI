@@ -1,42 +1,64 @@
-# Mail.TM Bulk Account Creator
+# Temporary Email CLI Manager
 
-A command-line tool to create multiple temporary email accounts on mail.tm.
+TypeScript-based command-line tool created for educational and portfolio purposes to demonstrate API integration, CLI workflows, input validation, rate-limit awareness, and file-based output management using the Mail.tm public API.
 
-## Requirements
+## Features
 
-- **Node.js** version 20 or higher — Download from https://nodejs.org
+- Fetches available Mail.tm domains
+- Creates temporary email accounts from the terminal
+- Validates user input before making API calls
+- Includes retry handling for rate limits and network hiccups
+- Saves generated results to a local text file
 
-## Setup
+## Tech Stack
 
-1. Download and extract the project to a folder on your PC
-2. Open **Command Prompt** or **PowerShell**
-3. Navigate to the project folder:
-   ```
-   cd C:\path\to\your\folder
-   ```
-4. Install dependencies:
-   ```
+- TypeScript
+- Node.js
+- Mail.tm public API
+- Mastra
+- Zod
+
+## Installation
+
+1. Install Node.js 20 or later.
+2. Clone the repository.
+3. Install dependencies:
+
+   ```bash
    npm install
    ```
 
-## How to Run
+## Usage
 
-```
+Run the CLI:
+
+```bash
 npx tsx create-accounts.ts
 ```
 
-The script will ask you:
+The tool will guide you through:
 
-1. **How many accounts?** — Enter any number (1 or more)
-2. **Which domain?** — Pick from the available list by number, or type the domain (with or without @)
-3. **What password?** — Must be at least 6 characters
-4. **What base username?** — For example, if you type `myuser`, it creates `myuser01`, `myuser02`, `myuser03`, etc.
+- Number of accounts to create
+- Domain selection
+- Password entry
+- Base username selection
 
-After all accounts are created, the credentials are saved to **accounts.txt** in the same folder.
+Generated account details are written to `accounts.txt`, which is ignored by Git for safety.
 
-## Notes
+## Responsible Use
 
-- The script handles rate limiting automatically — if mail.tm slows you down, it waits and retries
-- If you enter something wrong, it asks again instead of crashing
-- If a username already exists, it tells you and continues creating the rest
-- You need an internet connection to run this
+This project is intended only for educational, testing, and personal productivity use. It must not be used for spam, abuse, fake signups, bypassing platform rules, or violating any service terms.
+
+## Skills Demonstrated
+
+- TypeScript
+- API integration
+- CLI development
+- Node.js file handling
+- Input validation
+- Rate-limit awareness
+- Responsible automation
+
+## License
+
+Licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

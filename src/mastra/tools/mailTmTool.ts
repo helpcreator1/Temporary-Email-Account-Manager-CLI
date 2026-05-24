@@ -3,6 +3,9 @@ import { z } from "zod";
 import * as fs from "fs";
 import * as path from "path";
 
+const PROJECT_NAME = "Temporary Email CLI Manager";
+const OUTPUT_FILE = "accounts.txt";
+
 export const fetchMailTmDomains = createTool({
   id: "fetch-mail-tm-domains",
   description: "Fetches available domains from the mail.tm API",
@@ -35,7 +38,7 @@ export const fetchMailTmDomains = createTool({
 
 export const createMailTmAccount = createTool({
   id: "create-mail-tm-account",
-  description: "Creates a single mail.tm temporary email account",
+  description: "Creates a single Mail.tm temporary email account",
   inputSchema: z.object({
     address: z.string().describe("Full email address to create"),
     password: z.string().describe("Password for the account"),
@@ -153,7 +156,7 @@ export const exportAccountsToFile = createTool({
     const failedAccounts = inputData.accounts.filter((a) => !a.success);
 
     let fileContent = "====================================\n";
-    fileContent += "  MAIL.TM ACCOUNTS - BULK EXPORT\n";
+    fileContent += `  ${PROJECT_NAME} - ACCOUNT EXPORT\n`;
     fileContent += `  Generated: ${new Date().toISOString()}\n`;
     fileContent += "====================================\n\n";
     fileContent += `Total Created: ${successfulAccounts.length}\n`;
@@ -176,7 +179,7 @@ export const exportAccountsToFile = createTool({
       }
     }
 
-    const filePath = path.resolve(process.cwd(), "accounts.txt");
+    const filePath = path.resolve(process.cwd(), OUTPUT_FILE);
     fs.writeFileSync(filePath, fileContent, "utf-8");
 
     logger?.info("✅ [exportAccountsToFile] File exported successfully", {

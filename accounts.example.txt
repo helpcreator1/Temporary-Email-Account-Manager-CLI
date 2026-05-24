@@ -1,0 +1,9 @@
+Temporary Email CLI Manager
+
+This file is a safe example of the exported output format.
+
+Generated accounts will be written to accounts.txt at runtime.
+
+Example:
+Email: example01@mail.tm
+Password: your-password-here
