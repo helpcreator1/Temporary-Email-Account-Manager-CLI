@@ -1,8 +1,10 @@
-node_modules
-dist
+node_modules/
+dist/
 .mastra
 .env.development
 .env
+accounts.txt
 *.db
 *.db-*
+*.log
 .DS_Store

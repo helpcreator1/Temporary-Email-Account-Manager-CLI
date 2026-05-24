@@ -17,7 +17,7 @@ const accountResultSchema = z.object({
 const prepareAccountList = createStep({
   id: "prepare-account-list",
   description:
-    "Fetches available mail.tm domains and generates a list of account configurations to create",
+    "Fetches available mail.tm domains and generates a small demo list of account configurations",
   inputSchema: z.object({}) as any,
   outputSchema: z.array(
     z.object({
@@ -31,7 +31,9 @@ const prepareAccountList = createStep({
 
     const domainResult = await fetchMailTmDomains.execute!({}, { mastra });
     if ("error" in domainResult && domainResult.error) {
-      throw new Error(`Failed to fetch domains: ${(domainResult as any).message}`);
+      throw new Error(
+        `Failed to fetch domains: ${(domainResult as any).message}`,
+      );
     }
 
     const domains = (domainResult as any).domains as string[];
@@ -42,13 +44,13 @@ const prepareAccountList = createStep({
     const domain = domains[0];
     logger?.info("🌐 [Step 1] Using domain:", { domain });
 
-    const password = "Usman@relplit123456";
-    const totalAccounts = 100;
+    const password = "demo-password-123";
+    const totalAccounts = 3;
     const accounts = [];
 
     for (let i = 1; i <= totalAccounts; i++) {
       accounts.push({
-        address: `usmansreplitaccount${i}@${domain}`,
+        address: `demo-account-${i}@${domain}`,
         password,
       });
     }
@@ -64,7 +66,7 @@ const prepareAccountList = createStep({
 
 const createSingleAccount = createStep({
   id: "create-mail-tm-account",
-  description: "Creates a single temporary mail.tm account",
+  description: "Creates a single temporary Mail.tm account",
   inputSchema: z.object({
     address: z.string(),
     password: z.string(),
@@ -111,10 +113,7 @@ const createSingleAccount = createStep({
         return typedResult;
       }
 
-      if (
-        typedResult.message.includes("429") &&
-        attempt < maxRetries
-      ) {
+      if (typedResult.message.includes("429") && attempt < maxRetries) {
         logger?.warn(
           `⏳ [foreach] Rate limited, retry ${attempt + 1}/${maxRetries}`,
           { address: inputData.address },

@@ -14,19 +14,19 @@ const openai = createOpenAI({
 });
 
 export const automationAgent = new Agent({
-  name: "Mail.tm Account Manager",
+  name: "Temporary Email CLI Manager",
   id: "automationAgent",
   instructions: `
-    You are a mail.tm account management agent. Your job is to help create and manage
-    temporary email accounts on the mail.tm service.
+    You are a temporary email CLI assistant focused on educational, responsible use of the
+    Mail.tm public API.
 
     You can:
     - Fetch available domains from mail.tm
     - Create new temporary email accounts
     - Export account details to text files
 
-    When creating accounts, follow the naming pattern specified and use the provided password.
-    Always report results clearly including how many accounts were created successfully and any failures.
+    Keep responses clear, beginner-friendly, and rate-limit aware.
+    Avoid suggesting spam, abuse, fake signups, or any rule-bypassing behavior.
   `,
   model: openai("gpt-4o-mini"),
   tools: {

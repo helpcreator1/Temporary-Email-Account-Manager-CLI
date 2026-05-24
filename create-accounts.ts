@@ -1,6 +1,9 @@
 import * as readline from "readline";
 import * as fs from "fs";
 
+const PROJECT_NAME = "Temporary Email CLI Manager";
+const OUTPUT_FILE = "accounts.txt";
+
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -44,7 +47,10 @@ async function checkAccountExists(
   try {
     const res = await fetch("https://api.mail.tm/token", {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify({ address, password }),
     });
     return res.ok;
@@ -57,7 +63,12 @@ async function createAccount(
   address: string,
   password: string,
   retries = 7,
-): Promise<{ address: string; password: string; success: boolean; message: string }> {
+): Promise<{
+  address: string;
+  password: string;
+  success: boolean;
+  message: string;
+}> {
   let delay = 1500;
 
   for (let attempt = 1; attempt <= retries; attempt++) {
@@ -132,7 +143,9 @@ async function askDomain(domains: string[]): Promise<string> {
     domains.forEach((d, i) => console.log(`  ${i + 1}. ${d}`));
     console.log();
 
-    let input = await ask("Which domain do you want to use? (enter number or type domain): ");
+    let input = await ask(
+      "Which domain do you want to use? (enter number or type domain): ",
+    );
 
     input = input.replace(/^@/, "");
 
@@ -148,12 +161,16 @@ async function askDomain(domains: string[]): Promise<string> {
         console.log(`  Using domain: ${input}\n`);
         return input;
       } else {
-        console.log(`  Domain "${input}" is not available. Please pick from the list above.\n`);
+        console.log(
+          `  Domain "${input}" is not available. Please pick from the list above.\n`,
+        );
         continue;
       }
     }
 
-    console.log("  Invalid input. Enter a number from the list or type the full domain.\n");
+    console.log(
+      "  Invalid input. Enter a number from the list or type the full domain.\n",
+    );
   }
 }
 
@@ -171,21 +188,26 @@ async function askPassword(): Promise<string> {
 
 async function askUsername(): Promise<string> {
   while (true) {
-    const input = await ask("What base username do you want? (e.g. 'abc' -> abc01, abc02, ...): ");
-    if (input.length > 0) return input.toLowerCase().replace(/[^a-z0-9._-]/g, "");
+    const input = await ask(
+      "What base username do you want? (e.g. 'abc' -> abc01, abc02, ...): ",
+    );
+    if (input.length > 0)
+      return input.toLowerCase().replace(/[^a-z0-9._-]/g, "");
     console.log("  Username cannot be empty. Try again.\n");
   }
 }
 
 async function main() {
   console.log("\n========================================");
-  console.log("   MAIL.TM BULK ACCOUNT CREATOR");
+  console.log(`   ${PROJECT_NAME}`);
   console.log("========================================\n");
 
   console.log("Fetching available domains...");
   const domains = await fetchDomains();
   if (domains.length === 0) {
-    console.log("Could not fetch any domains from mail.tm. Check your internet and try again.");
+    console.log(
+      "Could not fetch any domains from mail.tm. Check your internet and try again.",
+    );
     rl.close();
     return;
   }
@@ -197,9 +219,14 @@ async function main() {
   const baseUsername = await askUsername();
 
   console.log(`\nChecking if "${baseUsername}@${domain}" already exists...`);
-  const exists = await checkAccountExists(`${baseUsername}@${domain}`, password);
+  const exists = await checkAccountExists(
+    `${baseUsername}@${domain}`,
+    password,
+  );
   if (exists) {
-    console.log(`  "${baseUsername}@${domain}" already exists. Sequential accounts will still be created.\n`);
+    console.log(
+      `  "${baseUsername}@${domain}" already exists. Sequential accounts will still be created.\n`,
+    );
   } else {
     console.log(`  "${baseUsername}@${domain}" is available.\n`);
   }
@@ -207,8 +234,10 @@ async function main() {
   const padSize = String(count).length < 2 ? 2 : String(count).length;
 
   console.log("========================================");
-  console.log(`  Creating ${count} accounts...`);
-  console.log(`  Pattern: ${baseUsername}${pad(1, padSize)}@${domain} - ${baseUsername}${pad(count, padSize)}@${domain}`);
+  console.log(`  Creating ${count} account(s)...`);
+  console.log(
+    `  Pattern: ${baseUsername}${pad(1, padSize)}@${domain} - ${baseUsername}${pad(count, padSize)}@${domain}`,
+  );
   console.log(`  Password: ${password}`);
   console.log("========================================\n");
 
@@ -244,7 +273,7 @@ async function main() {
   }
 
   let fileContent = "====================================\n";
-  fileContent += "  MAIL.TM ACCOUNTS - BULK EXPORT\n";
+  fileContent += `  ${PROJECT_NAME} - ACCOUNT EXPORT\n`;
   fileContent += `  Generated: ${new Date().toISOString()}\n`;
   fileContent += "====================================\n\n";
   fileContent += `Total Created: ${successCount}\n`;
@@ -266,13 +295,13 @@ async function main() {
     }
   }
 
-  fs.writeFileSync("accounts.txt", fileContent, "utf-8");
+  fs.writeFileSync(OUTPUT_FILE, fileContent, "utf-8");
 
   console.log("\n========================================");
   console.log("  DONE!");
   console.log(`  Created: ${successCount}`);
   console.log(`  Failed: ${failCount}`);
-  console.log("  Saved to: accounts.txt");
+  console.log(`  Saved to: ${OUTPUT_FILE}`);
   console.log("========================================\n");
 
   rl.close();
